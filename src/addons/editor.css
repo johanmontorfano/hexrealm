@@ -1,0 +1,27 @@
+div.addon_editor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    height: calc(100% - 72px);
+    background: #222222;
+    padding: 24px;
+    margin: 12px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+
+    & > label {
+        margin-top: 10px;
+        font-size: 18px;
+    }
+
+    & > input {
+        font-size: 18px;
+        background: #111111;
+        border: 1px solid black;
+        padding: 4px;
+        color: white;
+    }
+}
