@@ -1,5 +1,5 @@
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Group, Mesh, Object3D, Scene } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Scene } from "three";
 import palmtree from "../assets/palmtree.glb";
 import firtree from "../assets/firtree.glb";
 
@@ -15,7 +15,6 @@ STATIC_TREES.palmtree = (await loader.loadAsync(palmtree)).scene as any;
 STATIC_TREES.firtree = (await loader.loadAsync(firtree)).scene as any;
 
 function enableShadows(object: Scene) {
-    object.receiveShadow = true;
     object.traverse((child: any) => {
         if (!child.isMesh) return;
         child.receiveShadow = true;

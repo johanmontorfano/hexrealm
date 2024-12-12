@@ -6,14 +6,17 @@ import {
     MeshPhongMaterial,
     MeshPhysicalMaterial,
     Box3,
-    Vector3
+    Vector3,
+    MeshStandardMaterial
 } from "three";
 
 export const STATIC_RADIUS = 10;
 // WARN: RECOMPUTE THOSE VALUES WHEN `STATIC_RADIUS` CHANGES (LAST: 10)
-export const STATIC_X_SIZE = 20.21547031402588;
-export const STATIC_Y_SIZE = 17.5205078125;
-export const STATIC_Z_SIZE = 1.400000050663948;
+export const STATIC_X_SIZE = 20
+export const STATIC_Y_SIZE = 17.32050895690918;
+export const STATIC_Z_SIZE = 1;
+const LOCAL_STATIC_HEXAGON = makeHexagonGeometry();
+
 
 export function makeHexagonGeometry() {
     const hex = new Shape();
@@ -30,20 +33,24 @@ export function makeHexagonGeometry() {
     hex.closePath();
 
     const geo = new ExtrudeGeometry(hex, {
-        steps: 2,
-        depth: 1
+        steps: 8,
+        depth: 1,
+        bevelEnabled: false
     });
     geo.computeVertexNormals();
+    geo.computeBoundingBox();
     return geo;
 }
 
 export function makeHexagon() {
-    const mat = new MeshPhysicalMaterial({
+    const mat = new MeshStandardMaterial({
         color: 0x00FF00, 
     });
-    const mesh = new Mesh(makeHexagonGeometry(), mat);
+    const mesh = new Mesh(LOCAL_STATIC_HEXAGON.clone(), mat);
+
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-
     return mesh;
 }
+
+console.log(new Box3().setFromObject(makeHexagon()).getSize(new Vector3()));
