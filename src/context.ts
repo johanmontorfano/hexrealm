@@ -11,6 +11,7 @@ export interface Context {
     _water_level: number;
     _sand_level: number;
     _dirt_level: number;
+    _render_effects: boolean;
     _contextDepsUpdateRequested: boolean;
 }
 
@@ -21,6 +22,7 @@ export interface Context {
     _water_level: .2,
     _sand_level: .3,
     _dirt_level: .6,
+    _render_effects: false,
     _contextDepsUpdateRequested: false,
     get seed(): number {
         return this._seed;

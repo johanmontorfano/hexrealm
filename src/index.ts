@@ -44,9 +44,9 @@ console.log(terrain.hexs.length * 3, "objects created !");
 function animate() {
     if (contextDepsUpdateRequested())
         terrain.onContextUpdate();
-    
     terrain_group.rotation.y += 0.001;
-//    composer.render();
+    if ((window as any).ctx._render_effects)
+        composer.render();
     renderer.render(scene, camera);
     stats.update();
 }
