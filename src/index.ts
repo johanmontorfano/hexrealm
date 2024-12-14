@@ -12,7 +12,7 @@ import {
     Scene, 
     WebGLRenderer
 } from "three";
-import { contextDepsUpdateRequested } from "./context";
+import { contextDepsUpdateRequested, useContext } from "./context";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { useTerrain } from "./terrain";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
@@ -42,10 +42,13 @@ const composer = initEffectComposer(renderer, scene, camera);
 console.log(terrain.hexs.length * 3, "objects created !");
 
 function animate() {
+    const { rotation, render_effects } = useContext();
+    
     if (contextDepsUpdateRequested())
         terrain.onContextUpdate();
-    terrain_group.rotation.y += 0.001;
-    if ((window as any).ctx._render_effects)
+    if (rotation)
+        terrain_group.rotation.y += 0.001;
+    if (render_effects)
         composer.render();
     renderer.render(scene, camera);
     stats.update();
