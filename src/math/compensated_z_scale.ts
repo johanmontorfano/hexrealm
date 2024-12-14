@@ -5,5 +5,5 @@ import { STATIC_Z_SIZE } from "../objects/hexagon";
 * we have to compensate the scaling. That's what is done here. */
 export function setZCompensated(item: Mesh, z: number) {
     item.scale.setZ(z);
-    item.position.y = z * (STATIC_Z_SIZE - 1) / 2;
+    item.position.y = z * STATIC_Z_SIZE / 2;
 }
