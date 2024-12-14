@@ -2,22 +2,26 @@ import {
     Mesh, 
     Shape, 
     ExtrudeGeometry, 
-    FrontSide, 
-    MeshPhongMaterial,
-    MeshPhysicalMaterial,
     Box3,
     Vector3,
-    MeshStandardMaterial
+    MeshStandardMaterial,
+    Scene,
+    MeshPhysicalMaterial
 } from "three";
+import { getGLTF } from "./loader";
+import hex from "../assets/hex.glb";
 
 export const STATIC_RADIUS = 10;
 // WARN: RECOMPUTE THOSE VALUES WHEN `STATIC_RADIUS` CHANGES (LAST: 10)
-export const STATIC_X_SIZE = 20
-export const STATIC_Y_SIZE = 17.32050895690918;
+export const STATIC_X_SIZE = 20.00000501434065;
+export const STATIC_Y_SIZE = 17.320512063901198;
 export const STATIC_Z_SIZE = 1;
+export const STATIC_HEX: Mesh = (await getGLTF(hex) as any).children[0];
 const LOCAL_STATIC_HEXAGON = makeHexagonGeometry();
 
+STATIC_HEX.material = new MeshPhysicalMaterial({color: 0x00FF00});
 
+/** @deprecated use `STATIC_HEX` instead. */
 export function makeHexagonGeometry() {
     const hex = new Shape();
     
@@ -42,7 +46,8 @@ export function makeHexagonGeometry() {
     return geo;
 }
 
-export function makeHexagon() {
+/** @deprecated use `makeHexagon` instead. */
+export function makeHexagonLegacy() {
     const mat = new MeshStandardMaterial({
         color: 0x00FF00, 
     });
@@ -53,4 +58,6 @@ export function makeHexagon() {
     return mesh;
 }
 
-console.log(new Box3().setFromObject(makeHexagon()).getSize(new Vector3()));
+export function makeHexagon() {
+    return STATIC_HEX.clone(true);
+}
