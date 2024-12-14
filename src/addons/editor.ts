@@ -1,41 +1,28 @@
-import { Context, useContext } from "../context";
-import "./editor.css";
+import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
+import { useContext } from "../context";
 
-/** An input for values in `window.ctx` */
-function inputCtx(
-    name: string, 
-    kind: "string" | "number", 
-    attr: keyof Context
-) {
-    const label = document.createElement("label");
-    const input = document.createElement("input");
+const ui = new GUI();
+const context = useContext();
 
-    label.textContent = name;
-    input.type = kind;
-    input.value = useContext()[attr].toString();
-    if (kind === "number") {
-        input.min = "0";
-        input.step = attr !== "seed" ? ".1" : "1";
-    }
-    input.onchange = (ev) => {
-        const val = (ev.target as any).value as any;
-        (useContext()[attr] as any) = 
-            kind === "number" ? parseFloat(val) : val;
-    };
-    return [label, input];
-}
+const map = ui.addFolder("Map");
+map.add(context, "scale", 0, 4);
+map.add(context, "seed", 0, 9999);
+map.add(context, "noise", 0, 10);
+map.add(context, "trees_offset", 0, 1);
 
-const container = document.createElement("div");
-const title = document.createElement("h3");
-
-title.textContent = "Scene Context";
-container.append(title);
-Object.keys(useContext()).forEach(key => {
-    if (key[0] === "_") return;
-
-    const kind = typeof useContext()[key];
-
-    container.append(...inputCtx(key, kind as any, key as keyof Context));
+const biomes = ui.addFolder("Biomes");
+context.biomes_data.forEach(biome => {
+    const folder = biomes.addFolder(biome.name);
+    folder.addColor(biome, "color");
+    folder.add(biome, "threshold");
+    if (biome.altitudeDecay)
+        folder.add(biome, "altitudeDecay");
+    if (biome.altitudeModifier)
+       folder.add(biome, "altitudeModifier");
 });
-container.classList.add("addon_editor");
-document.body.append(container);
+
+const rendering = ui.addFolder("Rendering");
+rendering.add(context, "rotation");
+rendering.add(context, "render_effects");
+
+ui.onChange(() => window.ctx._contextDepsUpdateRequested = true);
