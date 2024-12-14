@@ -1,12 +1,14 @@
-import { Color, Group, Mesh, MeshPhysicalMaterial, Object3D } from "three";
+import { Mesh, MeshPhysicalMaterial, Object3D } from "three";
 import { getHexagonalNoise } from "./math/combined_noise";
 import { honeycomb } from "./math/honeycomb";
-import { makeHexagon, STATIC_X_SIZE, STATIC_Y_SIZE, STATIC_Z_SIZE } from "./objects/hexagon";
+import { makeHexagon, STATIC_Z_SIZE } from "./objects/hexagon";
 import { getZScaling } from "./math/get_z_scaling_factor";
 import { setZCompensated } from "./math/compensated_z_scale";
 import { useContext } from "./context";
 import { getHexagonalTreeNoise } from "./math/tree_noise";
 import { makeTree, Trees } from "./objects/tree";
+
+const { biomes_data: biomes, trees_offset } = useContext();
 
 function setMaterialWorldProperties(
     hex: Mesh, 
@@ -15,37 +17,23 @@ function setMaterialWorldProperties(
     w: number,
     tree: boolean
 ) {
-    const max_scale = getZScaling(w);
-    const scale = hex.scale.z;
+    const scale = getZScaling(w);
+    const relative_scale = hex.scale.z / scale;
     const mat = (hex.material as MeshPhysicalMaterial);
-    const {water_level, sand_level, dirt_level} = useContext(); 
+    let biome_found = false;
 
-    if (scale / max_scale < water_level) {
-        const rate = scale  / max_scale / water_level;
-        const b = 0x0000FF * rate;
-        const g = Math.round(0x00FF * rate + .1) * 0x000100;
-        mat.color.setHex(Math.min(b + g, 0xFFD68F));
-        setZCompensated(hex, max_scale * water_level);
-    }
-    else if (scale / max_scale < sand_level) {
-        mat.color.setHex(0xAAAA97);
-        palm_tree.visible = true;
-        fir_tree.visible = false;
-    }
-    else if (scale / max_scale < dirt_level) {
-        mat.color.setHex(0x4B8B3B);
-        palm_tree.visible = false;
-        fir_tree.visible = true;
-    }
-    else {
-        mat.color.setHex(0xFFFFFF);
-        palm_tree.visible = false;
-        fir_tree.visible = true;
-    }
+    for (const biome in biomes) {
+        if (biome_found || biomes[biome].threshold < relative_scale) continue;
 
-    if (!tree) {
-        palm_tree.visible = false;
-        fir_tree.visible = false;
+        const bdata = biomes[biome];
+        const has_tree = tree && bdata.enabledTreeType !== undefined;
+        
+        biome_found = true;
+        mat.color.set(bdata.color);
+        if (bdata.altitudeModifier)
+            setZCompensated(hex, bdata.altitudeModifier * scale);
+        palm_tree.visible = has_tree && bdata.enabledTreeType === "palm_tree";
+        fir_tree.visible = has_tree && bdata.enabledTreeType === "fir_tree";
     }
 }
 
@@ -59,7 +47,6 @@ export function useTerrain(w: number) {
 
     function generate(update = true) {
         const z_scale = getZScaling(w);
-        const {water_level} = useContext();
 
         /** Noise map to generate terrain variations */
         const noise = getHexagonalNoise(w);
@@ -77,8 +64,8 @@ export function useTerrain(w: number) {
                 hexs[i], 
                 trees.palmtree[i], 
                 trees.firtree[i], 
-                w, 
-                treeNoise[i] > water_level
+                w,
+                treeNoise[i] > trees_offset
             );
         });
     }
