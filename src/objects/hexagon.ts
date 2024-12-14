@@ -19,8 +19,6 @@ export const STATIC_Z_SIZE = 1;
 export const STATIC_HEX: Mesh = (await getGLTF(hex) as any).children[0];
 const LOCAL_STATIC_HEXAGON = makeHexagonGeometry();
 
-STATIC_HEX.material = new MeshPhysicalMaterial({color: 0x00FF00});
-
 /** @deprecated use `STATIC_HEX` instead. */
 export function makeHexagonGeometry() {
     const hex = new Shape();
@@ -59,5 +57,8 @@ export function makeHexagonLegacy() {
 }
 
 export function makeHexagon() {
-    return STATIC_HEX.clone(true);
+    const cloned = STATIC_HEX.clone();
+    
+    cloned.material = new MeshStandardMaterial({color: 0x00FF00});
+    return cloned;
 }
