@@ -28,13 +28,13 @@ export interface Context {
         {
             name: "water",
             threshold: .1,
-            color: new Color(0x000033),
+            color: new Color(0x4A4AD9),
             altitudeModifier: .18
         },
         {
             name: "shore",
             threshold: .18,
-            color: new Color(0xFFD68F),
+            color: new Color(0x588CD0),
             altitudeModifier: .18
         },
         {
