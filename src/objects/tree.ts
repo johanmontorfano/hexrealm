@@ -1,9 +1,7 @@
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { Mesh, MeshPhysicalMaterial, Scene } from "three";
+import { getGLTF } from "./loader";
+import { Mesh } from "three";
 import palmtree from "../assets/palmtree.glb";
 import firtree from "../assets/firtree.glb";
-import { getGLTF } from "./loader";
-
 
 export type Trees = "palmtree" | "firtree";
 
@@ -18,6 +16,5 @@ STATIC_TREES.palmtree.rotateZ(-Math.PI / 2);
 STATIC_TREES.firtree.rotateZ(-Math.PI / 2);
 
 export function makeTree(kind: Trees) {
-    console.log(STATIC_TREES[kind]);
     return STATIC_TREES[kind].clone();
 }
