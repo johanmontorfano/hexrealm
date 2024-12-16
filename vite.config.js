@@ -1,3 +1,6 @@
 export default {
-    assetsInclude: ["**/*.hdr", "**/*.glb"]
+    assetsInclude: ["**/*.hdr", "**/*.glb"],
+    build: {
+        target: "esnext"
+    }
 }
